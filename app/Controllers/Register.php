@@ -23,12 +23,15 @@ class Register extends ResourceController
             'confpassword' => 'matches[password]'
         ];
         if (!$this->validate($rules)) return $this->fail($this->validator->getErrors());
+
         $data = [
             'email'     => $this->request->getVar('email'),
             'password'  => password_hash($this->request->getVar('password'), PASSWORD_BCRYPT)
         ];
+
         $model = new UserModel();
         $registered = $model->save($data);
+
         $this->respondCreated($registered);
     }
 

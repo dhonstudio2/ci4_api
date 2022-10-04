@@ -3,11 +3,13 @@
 namespace App\Controllers;
 
 use App\Libraries\DhonRestful;
-use App\Models\UserModel;
+use App\Models\AddressModel;
 use CodeIgniter\API\ResponseTrait;
+use CodeIgniter\HTTP\ResponseInterface;
 use CodeIgniter\RESTful\ResourceController;
+use Config\Services;
 
-class Me extends ResourceController
+class Address extends ResourceController
 {
     /**
      * Return an array of resource objects, themselves in array format
@@ -19,14 +21,14 @@ class Me extends ResourceController
     /**
      * Return an array of resource objects, themselves in array format
      *
-     * @var \App\Models\UserModel
+     * @var \App\Models\AddressModel
      */
     protected $model;
 
     public function __construct()
     {
         $this->dhonrestful = new DhonRestful();
-        $this->model = new UserModel();
+        $this->model = new AddressModel();
     }
 
     public function __call($method, $args)
@@ -44,7 +46,7 @@ class Me extends ResourceController
     {
         $this->AutoWrapper(true);
 
-        $response = $this->model->first();
+        $response = $this->model->findAll();
         return $this->Ok($response);
     }
 
@@ -75,7 +77,22 @@ class Me extends ResourceController
      */
     public function create()
     {
-        //
+        $this->AutoWrapper(true);
+
+        foreach ($this->model->allowedFields as $field) {
+            $data[$field] = $this->request->getPost($field);
+        }
+
+        try {
+            $new_id = $this->model->insert($data);
+            $response = $this->model->find($new_id);
+            $this->AddMessage("Success");
+            return $this->Ok($response);
+        } catch (\Throwable $th) {
+            return Services::response()
+                ->setJSON(['Message' => $th->getMessage()])
+                ->setStatusCode(ResponseInterface::HTTP_BAD_REQUEST);
+        }
     }
 
     /**

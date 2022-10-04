@@ -34,14 +34,14 @@ class Login extends ResourceController
         $key = getenv('TOKEN_SECRET');
         $payload = array(
             "iat" => time(),
-            // "exp" => time() + 100,
+            "exp" => time() + 60 * 60 * 2,
             "uid" => $user['id'],
             "email" => $user['email']
         );
 
         $token = JWT::encode($payload, $key, 'HS256');
 
-        return $this->respond($token);
+        return $this->respond(['access_token' => $token]);
     }
 
     /**
