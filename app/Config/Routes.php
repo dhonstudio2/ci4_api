@@ -39,9 +39,24 @@ $routes->post('register', 'Register::index');
 $routes->post('login', 'Login::index');
 
 $routes->get('me', 'Me::index', ['filter' => 'auth']);
+
 $routes->get('hit', 'Hit::index', ['filter' => 'auth']);
 $routes->post('hit', 'Hit::create', ['filter' => 'auth']);
+
+$routes->get('address/getListByIP/(:segment)', 'Address::showListByIP/$1', ['filter' => 'auth']);
 $routes->post('address', 'Address::create', ['filter' => 'auth']);
+
+$routes->get('entity/getListByEntity/(:segment)', 'Entity::showListByEntity/$1', ['filter' => 'auth']);
+$routes->post('entity', 'Entity::create', ['filter' => 'auth']);
+
+$routes->get('page/getListByPage/(:segment)', 'Page::showListByPage/$1', ['filter' => 'auth']);
+$routes->post('page', 'Page::create', ['filter' => 'auth']);
+
+$routes->get('session/getListBySession/(:segment)', 'Session::showListBySession/$1', ['filter' => 'auth']);
+$routes->post('session', 'Session::create', ['filter' => 'auth']);
+
+$routes->get('source/getListBySource/(:segment)', 'Source::showListBySource/$1', ['filter' => 'auth']);
+$routes->post('source', 'Source::create', ['filter' => 'auth']);
 
 /*
  * --------------------------------------------------------------------

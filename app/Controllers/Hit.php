@@ -86,7 +86,7 @@ class Hit extends ResourceController
         try {
             $new_id = $this->model->insert($data);
             $response = $this->model->find($new_id);
-            $this->AddMessage("Success");
+            $this->AddMessage("POST Success");
             return $this->Ok($response);
         } catch (\Throwable $th) {
             return Services::response()

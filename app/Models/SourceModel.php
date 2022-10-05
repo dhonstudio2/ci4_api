@@ -4,26 +4,24 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-date_default_timezone_set('Asia/Jakarta');
-
-class HitModel extends Model
+class SourceModel extends Model
 {
     protected $DBGroup          = 'default';
-    protected $table            = 'dhon_hit';
-    protected $primaryKey       = 'id_hit';
+    protected $table            = 'dhon_source';
+    protected $primaryKey       = 'id_source';
     protected $useAutoIncrement = true;
     protected $insertID         = 0;
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    public $allowedFields       = ['address', 'entity', 'session', 'source', 'page'];
+    protected $allowedFields    = ['source'];
 
     // Dates
-    protected $useTimestamps = true;
+    protected $useTimestamps = false;
     protected $dateFormat    = 'datetime';
     protected $createdField  = 'created_at';
-    protected $updatedField  = 'created_at';
-    protected $deletedField  = 'created_at';
+    protected $updatedField  = 'updated_at';
+    protected $deletedField  = 'deleted_at';
 
     // Validation
     protected $validationRules      = [];

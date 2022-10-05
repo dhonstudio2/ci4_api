@@ -3,13 +3,13 @@
 namespace App\Controllers;
 
 use App\Libraries\DhonRestful;
-use App\Models\AddressModel;
+use App\Models\EntityModel;
 use CodeIgniter\API\ResponseTrait;
 use CodeIgniter\HTTP\ResponseInterface;
 use CodeIgniter\RESTful\ResourceController;
 use Config\Services;
 
-class Address extends ResourceController
+class Entity extends ResourceController
 {
     /**
      * Return an array of resource objects, themselves in array format
@@ -21,14 +21,14 @@ class Address extends ResourceController
     /**
      * Return an array of resource objects, themselves in array format
      *
-     * @var \App\Models\AddressModel
+     * @var \App\Models\EntityModel
      */
     protected $model;
 
     public function __construct()
     {
         $this->dhonrestful = new DhonRestful();
-        $this->model = new AddressModel();
+        $this->model = new EntityModel();
     }
 
     public function __call($method, $args)
@@ -44,10 +44,7 @@ class Address extends ResourceController
     use ResponseTrait;
     public function index()
     {
-        $this->AutoWrapper(true);
-
-        $response = $this->model->findAll();
-        return $this->Ok($response);
+        //
     }
 
     /**
@@ -65,11 +62,11 @@ class Address extends ResourceController
      *
      * @return mixed
      */
-    public function showListByIP($ip)
+    public function showListByEntity($entity)
     {
         $this->AutoWrapper(true);
 
-        $response = $this->model->where('ip_address', $ip)->findAll();
+        $response = $this->model->where('entity', $entity)->findAll();
         return $this->Ok($response);
     }
 

@@ -6,17 +6,17 @@ use CodeIgniter\Model;
 
 date_default_timezone_set('Asia/Jakarta');
 
-class HitModel extends Model
+class SessionModel extends Model
 {
     protected $DBGroup          = 'default';
-    protected $table            = 'dhon_hit';
-    protected $primaryKey       = 'id_hit';
+    protected $table            = 'dhon_session';
+    protected $primaryKey       = 'id_session';
     protected $useAutoIncrement = true;
     protected $insertID         = 0;
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    public $allowedFields       = ['address', 'entity', 'session', 'source', 'page'];
+    protected $allowedFields    = ['session', 'visitorName'];
 
     // Dates
     protected $useTimestamps = true;
