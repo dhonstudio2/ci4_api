@@ -85,12 +85,14 @@ class Source extends ResourceController
      *
      * @return mixed
      */
-    public function create()
+    public function create($data = '')
     {
         $this->AutoWrapper(true);
 
-        foreach ($this->model->allowedFields as $field) {
-            $data[$field] = $this->request->getPost($field);
+        if ($data == '') {
+            foreach ($this->model->allowedFields as $field) {
+                $data[$field] = $this->request->getPost($field);
+            }
         }
 
         try {
@@ -103,6 +105,18 @@ class Source extends ResourceController
                 ->setJSON(['Message' => $th->getMessage()])
                 ->setStatusCode(ResponseInterface::HTTP_BAD_REQUEST);
         }
+    }
+
+    public function createIfEmpty($source = '')
+    {
+        $source = $source == '' ? $this->request->getPost('source') : $source;
+        $sources = json_decode($this->showListBySource($source)->getJSON(), true)['Data'];
+
+        $response = (count($sources) > 0) ? $sources[0] : json_decode($this->create([
+            'source' => $source
+        ])->getJSON(), true)['Data'];
+
+        return $this->Ok($response);
     }
 
     /**

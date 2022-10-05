@@ -75,12 +75,14 @@ class Hit extends ResourceController
      *
      * @return mixed
      */
-    public function create()
+    public function create($data = '')
     {
         $this->AutoWrapper(true);
 
-        foreach ($this->model->allowedFields as $field) {
-            $data[$field] = $this->request->getPost($field);
+        if ($data == '') {
+            foreach ($this->model->allowedFields as $field) {
+                $data[$field] = $this->request->getPost($field);
+            }
         }
 
         try {
@@ -93,6 +95,49 @@ class Hit extends ResourceController
                 ->setJSON(['Message' => $th->getMessage()])
                 ->setStatusCode(ResponseInterface::HTTP_BAD_REQUEST);
         }
+    }
+
+    /**
+     * Create a new resource object, from "posted" parameters
+     *
+     * @return mixed
+     */
+    public function createAll()
+    {
+        $addressController = new Address();
+        $address = json_decode($addressController->createIfEmpty($this->request->getPost('address'))->getJSON(), true)['Data'];
+
+        $entityController = new Entity();
+        $entity = json_decode($entityController->createIfEmpty($this->request->getPost('entity'))->getJSON(), true)['Data'];
+
+        $sessionController = new Session();
+        $session = json_decode($sessionController->createIfEmpty($this->request->getPost('session'))->getJSON(), true)['Data'];
+
+        $sourceController = new Source();
+        $source = json_decode($sourceController->createIfEmpty($this->request->getPost('source'))->getJSON(), true)['Data'];
+
+        $pageController = new Page();
+        $page = json_decode($pageController->createIfEmpty($this->request->getPost('page'))->getJSON(), true)['Data'];
+
+        $this->create([
+            'address' => $address['id_address'],
+            'entity' => $entity['id'],
+            'session' => $session['id_session'],
+            'source' => $source['id_source'],
+            'page' => $page['id_page'],
+        ]);
+
+        $response = [
+            'Data' => [
+                'address' => $address['ip_info'],
+                'entity' => $entity['entity'],
+                'session' => $session['visitorName'],
+                'source' => $source['source'],
+                'page' => $page['page'],
+            ],
+            'Message' => 'POST Success'
+        ];
+        return $this->Ok($response);
     }
 
     /**

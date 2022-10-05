@@ -85,12 +85,14 @@ class Entity extends ResourceController
      *
      * @return mixed
      */
-    public function create()
+    public function create($data = '')
     {
         $this->AutoWrapper(true);
 
-        foreach ($this->model->allowedFields as $field) {
-            $data[$field] = $this->request->getPost($field);
+        if ($data == '') {
+            foreach ($this->model->allowedFields as $field) {
+                $data[$field] = $this->request->getPost($field);
+            }
         }
 
         try {
@@ -103,6 +105,23 @@ class Entity extends ResourceController
                 ->setJSON(['Message' => $th->getMessage()])
                 ->setStatusCode(ResponseInterface::HTTP_BAD_REQUEST);
         }
+    }
+
+    /**
+     * Create a new resource object, from "posted" parameters
+     *
+     * @return mixed
+     */
+    public function createIfEmpty($entity = '')
+    {
+        $entity = $entity == '' ? $this->request->getPost('entity') : $entity;
+        $entities = json_decode($this->showListByEntity($entity)->getJSON(), true)['Data'];
+
+        $response = (count($entities) > 0) ? $entities[0] : json_decode($this->create([
+            'entity' => $entity
+        ])->getJSON(), true)['Data'];
+
+        return $this->Ok($response);
     }
 
     /**

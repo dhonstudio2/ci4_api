@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Libraries\DhonCurl;
 use App\Libraries\DhonRestful;
 use App\Models\AddressModel;
 use CodeIgniter\API\ResponseTrait;
@@ -46,7 +47,7 @@ class Address extends ResourceController
     {
         $this->AutoWrapper(true);
 
-        $response = $this->model->findAll();
+        $response = $this->model->first();
         return $this->Ok($response);
     }
 
@@ -88,12 +89,14 @@ class Address extends ResourceController
      *
      * @return mixed
      */
-    public function create()
+    public function create($data = '')
     {
         $this->AutoWrapper(true);
 
-        foreach ($this->model->allowedFields as $field) {
-            $data[$field] = $this->request->getPost($field);
+        if ($data == '') {
+            foreach ($this->model->allowedFields as $field) {
+                $data[$field] = $this->request->getPost($field);
+            }
         }
 
         try {
@@ -106,6 +109,26 @@ class Address extends ResourceController
                 ->setJSON(['Message' => $th->getMessage()])
                 ->setStatusCode(ResponseInterface::HTTP_BAD_REQUEST);
         }
+    }
+
+    /**
+     * Create a new resource object, from "posted" parameters
+     *
+     * @return mixed
+     */
+    public function createIfEmpty($ip_address = '')
+    {
+        $dhoncurl = new DhonCurl();
+
+        $ip_address = $ip_address == '' ? $this->request->getPost('ip_address') : $ip_address;
+        $addresses = json_decode($this->showListByIP($ip_address)->getJSON(), true)['Data'];
+
+        $response = (count($addresses) > 0) ? $addresses[0] : json_decode($this->create([
+            'ip_address' => $ip_address,
+            'ip_info' => json_encode($dhoncurl->curl_get("http://ip-api.com/json/{$ip_address}"))
+        ])->getJSON(), true)['Data'];
+
+        return $this->Ok($response);
     }
 
     /**

@@ -85,12 +85,14 @@ class Page extends ResourceController
      *
      * @return mixed
      */
-    public function create()
+    public function create($data = '')
     {
         $this->AutoWrapper(true);
 
-        foreach ($this->model->allowedFields as $field) {
-            $data[$field] = $this->request->getPost($field);
+        if ($data == '') {
+            foreach ($this->model->allowedFields as $field) {
+                $data[$field] = $this->request->getPost($field);
+            }
         }
 
         try {
@@ -103,6 +105,18 @@ class Page extends ResourceController
                 ->setJSON(['Message' => $th->getMessage()])
                 ->setStatusCode(ResponseInterface::HTTP_BAD_REQUEST);
         }
+    }
+
+    public function createIfEmpty($page = '')
+    {
+        $page = $page == '' ? $this->request->getPost('page') : $page;
+        $pages = json_decode($this->showListByPage($page)->getJSON(), true)['Data'];
+
+        $response = (count($pages) > 0) ? $pages[0] : json_decode($this->create([
+            'page' => $page
+        ])->getJSON(), true)['Data'];
+
+        return $this->Ok($response);
     }
 
     /**

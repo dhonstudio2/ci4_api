@@ -30,7 +30,7 @@ class DhonRestful extends ResourceController
     public function Ok($response)
     {
         if ($this->autowrapper) {
-            if (count($response) != count($response, COUNT_RECURSIVE)) $result["Total"] = count($response);
+            if (is_array($response) && count($response) != count($response, COUNT_RECURSIVE)) $result["Total"] = count($response);
             $result["Data"] = $response;
             if ($this->message) $result["Message"] = $this->message;
         } else $result = $response;

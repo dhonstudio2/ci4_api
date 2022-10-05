@@ -41,10 +41,11 @@ $routes->post('login', 'Login::index');
 $routes->get('me', 'Me::index', ['filter' => 'auth']);
 
 $routes->get('hit', 'Hit::index', ['filter' => 'auth']);
-$routes->post('hit', 'Hit::create', ['filter' => 'auth']);
+$routes->post('hit', 'Hit::createAll', ['filter' => 'auth']);
 
+$routes->get('address', 'Address::index', ['filter' => 'auth']);
 $routes->get('address/getListByIP/(:segment)', 'Address::showListByIP/$1', ['filter' => 'auth']);
-$routes->post('address', 'Address::create', ['filter' => 'auth']);
+$routes->post('address', 'Address::createIfEmpty', ['filter' => 'auth']);
 
 $routes->get('entity/getListByEntity/(:segment)', 'Entity::showListByEntity/$1', ['filter' => 'auth']);
 $routes->post('entity', 'Entity::create', ['filter' => 'auth']);
